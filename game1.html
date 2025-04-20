@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tebak Angka</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-container {
+            background-color: #1c1c1c;
+            border-radius: 10px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #FF9800;
+        }
+
+        p {
+            font-size: 16px;
+            color: #ddd;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+        }
+
+        input {
+            width: 60%;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #FF5722;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>Game Tebak Angka</h1>
+    <p>Tebak angka antara 1 dan 100!</p>
+    
+    <div>
+        <input type="number" id="userInput" placeholder="Masukkan angka..." />
+        <button onclick="checkGuess()">Tebak!</button>
+    </div>
+
+    <p id="hint"></p>
+    <p id="result" class="result"></p>
+    <p id="highScore"></p>
+    <button id="playAgainButton" class="hidden" onclick="playAgain()">Coba Lagi</button>
+    <footer>
+        <p>Semoga Beruntung!</p>
+    </footer>
+</div>
+
+<script>
+    let randomNumber;
+    let attempts = 0;
+    let highScore = localStorage.getItem("highScore") || Infinity;
+
+    function startNewGame() {
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        attempts = 0;
+        document.getElementById("userInput").disabled = false;
+        document.getElementById("playAgainButton").classList.add("hidden");
+        document.getElementById("hint").textContent = "";
+        document.getElementById("result").textContent = "";
+    }
+
+    function checkGuess() {
+        const userInput = document.getElementById("userInput").value;
+        const result = document.getElementById("result");
+        const hint = document.getElementById("hint");
+
+        if (userInput < 1 || userInput > 100 || isNaN(userInput)) {
+            result.textContent = "Masukkan angka antara 1 dan 100.";
+            result.style.color = "#FF5722";
+            return;
+        }
+
+        attempts++;
+
+        if (userInput < randomNumber) {
+            hint.textContent = "Tebakanmu terlalu rendah!";
+            result.textContent = `Coba lagi! Kamu sudah mencoba ${attempts} kali.`;
+            result.style.color = "#FF5722";
+        } else if (userInput > randomNumber) {
+            hint.textContent = "Tebakanmu terlalu tinggi!";
+            result.textContent = `Coba lagi! Kamu sudah mencoba ${attempts} kali.`;
+            result.style.color = "#FF5722";
+        } else {
+            hint.textContent = "Selamat! Tebakanmu benar!";
+            result.textContent = `Total percobaan: ${attempts}`;
+            result.style.color = "#4CAF50";
+            document.getElementById("userInput").disabled = true;
+
+            // Update high score
+            if (attempts < highScore) {
+                highScore = attempts;
+                localStorage.setItem("highScore", highScore);
+            }
+
+            document.getElementById("highScore").textContent = `High Score: ${highScore} percobaan`;
+            document.getElementById("playAgainButton").classList.remove("hidden");
+        }
+    }
+
+    function playAgain() {
+        startNewGame();
+        document.getElementById("userInput").value = "";
+    }
+
+    // Start the game when the page loads
+    startNewGame();
+</script>
+
+</body>
+</html>
